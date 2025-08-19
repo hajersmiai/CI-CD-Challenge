@@ -4,7 +4,7 @@ from app import app as app_component
 
 
 def get_env_config(env: str):
-    env = (env).lower()
+    env = (env, "dev").lower()
     if env in {"dev", "development"}:
         return ("Dev Environment", "#e6ffed")  # greenish
     if env in {"qa", "test", "staging"}:
@@ -13,7 +13,7 @@ def get_env_config(env: str):
 
 
 def page():
-    app_env = os.getenv("APP_ENV")
+    app_env = os.getenv("APP_ENV", "dev")
     title, bg = get_env_config(app_env)
     st.set_page_config(page_title=title, layout="wide")
     st.markdown(
@@ -33,4 +33,3 @@ def page():
 
 if __name__ == "__main__":
     page()
-    
