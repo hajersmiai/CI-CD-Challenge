@@ -1,0 +1,126 @@
+name: CD
+
+on:
+  push:
+    branches: [ "dev", "qa", "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy_dev:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    env:
+      APP_ENV: dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install deps
+        run: python -m pip install -r requirements.txt
+      - name: Build package (env + secrets)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          {
+            echo "APP_ENV=$APP_ENV"
+            if [ -n "$GEMINI_API_KEY" ]; then echo "GEMINI_API_KEY=$GEMINI_API_KEY"; fi
+          } > .env
+          zip -r build-dev.zip app .env requirements.txt
+      - name: Write deployment log
+        run: |
+          echo " Deployed to 'dev'" > DEPLOYED-dev.md
+          echo "Commit: $GITHUB_SHA" >> DEPLOYED-dev.md
+          echo "By: $GITHUB_ACTOR" >> DEPLOYED-dev.md
+          echo "When: $(date -u)" >> DEPLOYED-dev.md
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-build-${{ github.run_number }}
+          path: |
+            build-dev.zip
+            DEPLOYED-dev.md
+
+  deploy_qa:
+    if: github.ref == 'refs/heads/qa'
+    runs-on: ubuntu-latest
+    environment:
+      name: qa
+    env:
+      APP_ENV: qa
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install deps
+        run: python -m pip install -r requirements.txt
+      - name: Build package (env + secrets)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          {
+            echo "APP_ENV=$APP_ENV"
+            if [ -n "$GEMINI_API_KEY" ]; then echo "GEMINI_API_KEY=$GEMINI_API_KEY"; fi
+          } > .env
+          zip -r build-qa.zip app .env requirements.txt
+      - name: Write deployment log
+        run: |
+          echo " Deployed to 'qa'" > DEPLOYED-qa.md
+          echo "Commit: $GITHUB_SHA" >> DEPLOYED-qa.md
+          echo "By: $GITHUB_ACTOR" >> DEPLOYED-qa.md
+          echo "When: $(date -u)" >> DEPLOYED-qa.md
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-build-${{ github.run_number }}
+          path: |
+            build-qa.zip
+            DEPLOYED-qa.md
+
+  deploy_prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Configure the 'prod' environment in Settings → Environments with required reviewers
+    environment:
+      name: prod
+    env:
+      APP_ENV: prod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install deps
+        run: python -m pip install -r requirements.txt
+      - name: Build package (env + secrets)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          {
+            echo "APP_ENV=$APP_ENV"
+            if [ -n "$GEMINI_API_KEY" ]; then echo "GEMINI_API_KEY=$GEMINI_API_KEY"; fi
+          } > .env
+          zip -r build-prod.zip app .env requirements.txt
+      - name: Write deployment log
+        run: |
+          echo "Deployed to 'prod'" > DEPLOYED-prod.md
+          echo "Commit: $GITHUB_SHA" >> DEPLOYED-prod.md
+          echo "By: $GITHUB_ACTOR" >> DEPLOYED-prod.md
+          echo "When: $(date -u)" >> DEPLOYED-prod.md
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-build-${{ github.run_number }}
+          path: |
+            build-prod.zip
+            DEPLOYED-prod.md
