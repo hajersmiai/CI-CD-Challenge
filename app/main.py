@@ -13,7 +13,7 @@ def get_env_config(env: str):
 
 
 def page():
-    app_env = os.getenv("APP_ENV", "dev")
+    app_env = os.getenv("APP_ENV")
     title, bg = get_env_config(app_env)
     st.set_page_config(page_title=title, layout="wide")
     st.markdown(
