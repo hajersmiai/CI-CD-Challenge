@@ -9,8 +9,6 @@ import time
 # load environment variables
 load_dotenv()
 _DEFAULT_API_KEY = os.getenv("GEMINI_API_KEY", "")
-
-
 # -----------------------------
 # LLM call (async)
 # -----------------------------
@@ -79,7 +77,6 @@ async def translate_text(text: str, target_language: str, api_key: str) -> str:
                 return "An error occurred. Please check your internet connection or API key."
 
     return "Translation failed after multiple retries."
-
 
 # -----------------------------
 # UI (callable from main)

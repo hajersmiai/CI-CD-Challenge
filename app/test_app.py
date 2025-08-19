@@ -14,3 +14,4 @@ def test_get_env_config_qa():
 def test_get_env_config_prod():
     title, _ = get_env_config("prod")
     assert "Production" in title
+    
