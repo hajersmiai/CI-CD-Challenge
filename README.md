@@ -75,7 +75,8 @@ python -m pip install -r requirements.txt
 export GEMINI_API_KEY=sk-... && APP_ENV=dev streamlit run app/main.py
 # Windows PowerShell
 # $env:GEMINI_API_KEY = "sk-..."; $env:APP_ENV = "dev"; streamlit run app/main.py
-Environments:
+```
+# Environments:
 
 dev → green background, title "Dev Environment"
 
