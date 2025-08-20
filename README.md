@@ -11,7 +11,7 @@ The sample app is a **Detective Language Translator** that calls Google's Gemini
 ## Features
 - CI on PRs to `main`: lint + tests, uploads reports as artifacts.
 - CD on pushes: `dev` → Dev, `qa` → QA, `main` → Prod (**requires approval**).
-- Each deploy emits a log like: `🚀 Deployed to 'environment'` and uploads a zip artifact.
+- Each deploy emits a log like: ` Deployed to 'environment'` and uploads a zip artifact.
 - Uses environment **secrets** (`GEMINI_API_KEY`) written into `.env` at build time.
 
 # Quick, Ready-to-Ship Pack
@@ -38,15 +38,15 @@ Trigger CD: push to dev → deploy to dev; push to qa → deploy to qa; push to 
 
 ## Project Structure
 app/            # Streamlit app
-app.py        # callable: app(env)
-main.py       # sets background based on APP_ENV and mounts app(env)
+app.py          # callable: app(env)
+main.py         # sets background based on APP_ENV and mounts app(env)
 
 tests/          # Unit tests for CI
 test_app.py
 
 .github/workflows/
-ci.yml         # Continuous Integration (PRs → main)
-cd.yml         # Continuous Delivery (Dev/QA/Prod)
+ci.yml          # Continuous Integration (PRs → main)
+cd.yml          # Continuous Delivery (Dev/QA/Prod)
 ## Repository Tree
 
 CI-CD-Challenge
@@ -63,8 +63,6 @@ CI-CD-Challenge
     └── workflows/
         ├── ci.yml
         └── cd.yml
-
-
 
 
 ##  Local Run
